@@ -168,6 +168,20 @@ void main_window_show_message(int key) {
       s_moves_down++;
       s_moves_right++;
       break;
+    case KEY_LEFT:
+      text_layer_set_background_color(s_move_up_layer, GColorRed);
+      text_layer_set_background_color(s_move_down_layer, GColorRed);
+      text_layer_set_background_color(s_move_left_layer, GColorGreen);
+      text_layer_set_background_color(s_move_right_layer, GColorRed);
+      s_moves_left++;
+      break;
+    case KEY_RIGHT:
+      text_layer_set_background_color(s_move_up_layer, GColorRed);
+      text_layer_set_background_color(s_move_down_layer, GColorRed);
+      text_layer_set_background_color(s_move_left_layer, GColorRed);
+      text_layer_set_background_color(s_move_right_layer, GColorGreen);
+      s_moves_right++;
+      break;
     default:
       APP_LOG(APP_LOG_LEVEL_INFO, "Unknown key: %d", key);
       break;

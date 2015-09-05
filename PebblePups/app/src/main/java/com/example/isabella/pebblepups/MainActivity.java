@@ -38,7 +38,7 @@ import com.getpebble.android.kit.util.PebbleDictionary;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final UUID WATCHAPP_UUID = UUID.fromString("7AD6FC65-2845-45DF-82B9-783492580CCB");
+    private static final UUID WATCHAPP_UUID = UUID.fromString("945fcb0e-31fa-4dc2-a96d-a441e6ae6cc1");
     private static final String WATCHAPP_FILENAME = "pebble.pbw";
 
     private static final int
@@ -319,6 +319,12 @@ public class MainActivity extends ActionBarActivity {
                 System.out.println("moving D");
                 out.addString(KEY_DOWN, "D");
             }
+        } else if(movingLeft) {
+            System.out.println("moving L");
+            out.addString(KEY_LEFT, "L");
+        } else if(movingRight) {
+            System.out.println("moving R");
+            out.addString(KEY_RIGHT, "R");
         }
 
         PebbleKit.sendDataToPebble(context, WATCHAPP_UUID, out);

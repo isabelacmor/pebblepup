@@ -87,10 +87,16 @@ void inbox_received_handler(DictionaryIterator *iterator, void *context) {
         main_window_show_message(KEY_DOWN_RIGHT);
         ping_arduino("KEY_DOWN_RIGHT");
         break;
-      // case KEY_UPDATE_NAME:
-      //   APP_LOG(APP_LOG_LEVEL_INFO, "name to: %s", t->value->cstring);
-      //   main_window_update_name(t->value->cstring);
-      //   break;
+      case KEY_LEFT:
+        // Trigger left movement
+        main_window_show_message(KEY_LEFT);
+        ping_arduino("KEY_LEFT");
+        break;
+      case KEY_RIGHT:
+        // Trigger right movement
+        main_window_show_message(KEY_RIGHT);
+        ping_arduino("KEY_RIGHT");
+        break;
       case KEY_UPDATE_GENDER:
         APP_LOG(APP_LOG_LEVEL_INFO, "gender to: %s", t->value->cstring);
         main_window_update_gender(t->value->cstring);
