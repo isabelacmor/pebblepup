@@ -1,0 +1,1 @@
+Pebble Rocks Boulder is our first hardware hackathon. We'll be working with the Pebble Time, smartstraps, Arduinos, Teensies, and more to make a robot controlled with your Time through your smartphone.
