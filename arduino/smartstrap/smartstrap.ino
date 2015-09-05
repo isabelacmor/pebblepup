@@ -106,6 +106,26 @@ void loop() {
         delay(100);
         digitalWrite(PIN_REVERSE, LOW);
         digitalWrite(PIN_RIGHT, LOW);
+      } else if(strcmp((char*)s_data_buffer, "KEY_LEFT") == 0) {
+        // Make sure all other pins are off so we don't short
+        digitalWrite(PIN_FORWARD, LOW);
+        digitalWrite(PIN_REVERSE, LOW);
+        digitalWrite(PIN_RIGHT, LOW);
+        
+        // Turn on left pin
+        digitalWrite(PIN_LEFT, HIGH);
+        delay(100);
+        digitalWrite(PIN_LEFT, LOW);
+      } else if(strcmp((char*)s_data_buffer, "KEY_RIGHT") == 0) {
+        // Make sure all other pins are off so we don't short
+        digitalWrite(PIN_FORWARD, LOW);
+        digitalWrite(PIN_REVERSE, LOW);
+        digitalWrite(PIN_LEFT, LOW);
+        
+        // Turn on right pin
+        digitalWrite(PIN_RIGHT, HIGH);
+        delay(100);
+        digitalWrite(PIN_RIGHT, LOW);
       }
       
 //      if(type == RequestTypeRead || type == RequestTypeWriteRead) {
