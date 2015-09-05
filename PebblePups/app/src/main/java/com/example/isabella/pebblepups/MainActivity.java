@@ -38,7 +38,7 @@ import com.getpebble.android.kit.util.PebbleDictionary;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final UUID WATCHAPP_UUID = UUID.fromString("7AD6FC65-2845-45DF-82B9-783492580CCB");
+    private static final UUID WATCHAPP_UUID = UUID.fromString("945fcb0e-31fa-4dc2-a96d-a441e6ae6cc1");
     private static final String WATCHAPP_FILENAME = "pebble.pbw";
 
     private static final int
