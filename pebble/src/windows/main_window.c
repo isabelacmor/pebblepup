@@ -1,5 +1,7 @@
 #include "main_window.h"
 #include "../strap.h"
+#include <stdio.h>
+#include <string.h>
 
 #define KEY_UP 1
 #define KEY_DOWN 2
@@ -16,12 +18,33 @@ static TextLayer *s_connected_state_layer, *s_bytes_read_layer,
 static TextLayer *s_hw_layer;
 static int s_up_presses;
 
+static GBitmap *s_bitmap_boy;
+static GBitmap *s_bitmap_girl;
+static BitmapLayer *s_bitmap_layer_boy;
+static BitmapLayer *s_bitmap_layer_girl;
+static TextLayer *s_dog_name;
+
 static int s_moves_up, s_moves_down, s_moves_left, s_moves_right;
 
 static TextLayer *s_move_up_layer;
 static TextLayer *s_move_down_layer;
 static TextLayer *s_move_left_layer;
 static TextLayer *s_move_right_layer;
+
+void create_boy(GRect bounds) {
+  s_bitmap_layer_boy = bitmap_layer_create(GRect(0, 0, bounds.size.w, 80));
+
+  bitmap_layer_set_bitmap(s_bitmap_layer_boy, s_bitmap_boy);
+  bitmap_layer_set_compositing_mode(s_bitmap_layer_boy, GCompOpSet);
+  layer_add_child(window_get_root_layer(s_main_window), bitmap_layer_get_layer(s_bitmap_layer_boy));
+}
+
+void create_girl(GRect bounds) {
+  s_bitmap_layer_girl = bitmap_layer_create(GRect(0, 0, bounds.size.w, 80));
+  bitmap_layer_set_bitmap(s_bitmap_layer_girl, s_bitmap_girl);
+  bitmap_layer_set_compositing_mode(s_bitmap_layer_girl, GCompOpSet);
+  layer_add_child(window_get_root_layer(s_main_window), bitmap_layer_get_layer(s_bitmap_layer_girl));
+}
 
 static TextLayer* text_layer_init(GRect bounds, char* font, GTextAlignment align, GColor color) {
   TextLayer *this = text_layer_create(bounds);
@@ -34,44 +57,38 @@ static TextLayer* text_layer_init(GRect bounds, char* font, GTextAlignment align
 }
 
 void main_window_load(Window *window) {
-  Layer *window_layer = window_get_root_layer(window);
+  Layer *window_layer = window_get_root_layer(s_main_window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  // s_connected_state_layer = text_layer_init(
-  //   GRect(0, 0, bounds.size.w, MAIN_WINDOW_STATE_HEIGHT),
-  //   FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
-  //
-  // s_bytes_read_layer = text_layer_init(
-  //   GRect(3, MAIN_WINDOW_STATE_HEIGHT, bounds.size.w, 28),
-  //   FONT_KEY_GOTHIC_24_BOLD, GTextAlignmentLeft, GColorWhite);
-  //
-  // s_error_rate_layer = text_layer_init(
-  //   GRect(3, (2 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
-  //   FONT_KEY_GOTHIC_24_BOLD, GTextAlignmentLeft, GColorWhite);
-  //
-  // s_notif_count_layer = text_layer_init(
-  //   GRect(3, (3 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
-  //   FONT_KEY_GOTHIC_24_BOLD, GTextAlignmentLeft, GColorWhite);
-
   s_hw_layer = text_layer_init(
-      GRect(3, (0 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
-      FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
-
-  s_move_up_layer = text_layer_init(
-      GRect(3, (1 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
-      FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
-
-  s_move_down_layer = text_layer_init(
-      GRect(3, (2 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
-      FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
-
-  s_move_left_layer = text_layer_init(
       GRect(3, (3 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
       FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
 
-  s_move_right_layer = text_layer_init(
+  s_move_up_layer = text_layer_init(
       GRect(3, (4 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
       FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
+
+  s_move_down_layer = text_layer_init(
+      GRect(3, (5 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
+      FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
+
+  s_move_left_layer = text_layer_init(
+      GRect(3, (6 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
+      FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
+
+  s_move_right_layer = text_layer_init(
+      GRect(3, (7 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
+      FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
+
+  s_bitmap_boy = gbitmap_create_with_resource(RESOURCE_ID_DOG_BLUE);
+  s_bitmap_girl = gbitmap_create_with_resource(RESOURCE_ID_DOG_PINK);
+
+  create_boy(layer_get_bounds(window_layer));
+
+  s_dog_name = text_layer_init(GRect(0, 20, bounds.size.w, 40),
+      FONT_KEY_BITHAM_30_BLACK, GTextAlignmentCenter, GColorWhite);
+
+  text_layer_set_text(s_dog_name, "Max");
 
   // Init UI
   // main_window_set_connected_state(false);
@@ -87,6 +104,11 @@ void main_window_unload(Window *window) {
   text_layer_destroy(s_error_rate_layer);
   text_layer_destroy(s_notif_count_layer);
 
+  bitmap_layer_destroy(s_bitmap_layer_boy);
+  bitmap_layer_destroy(s_bitmap_layer_girl);
+  gbitmap_destroy(s_bitmap_boy);
+  gbitmap_destroy(s_bitmap_girl);
+
   window_destroy(s_main_window);
 }
 
@@ -95,7 +117,7 @@ void main_window_up_click_handler(ClickRecognizerRef recognizer, void *context) 
   static char s_buffer[128];
   snprintf(s_buffer, sizeof(s_buffer), "Up presses:%d", s_up_presses);
   text_layer_set_text(s_hw_layer, s_buffer);
-  ping_arduino();
+  // ping_arduino();
 }
 
 void main_window_show_message(int key) {
@@ -218,4 +240,39 @@ void main_window_init_moves() {
   text_layer_set_text(s_move_down_layer, s_buffer2);
   text_layer_set_text(s_move_left_layer, s_buffer3);
   text_layer_set_text(s_move_right_layer, s_buffer4);
+}
+
+void main_window_update_name(char* value, GRect bounds) {
+  s_dog_name = text_layer_init(GRect(0, 20, bounds.size.w, 40),
+      FONT_KEY_BITHAM_30_BLACK, GTextAlignmentCenter, GColorWhite);
+
+  text_layer_set_text(s_dog_name, value);
+
+  APP_LOG(APP_LOG_LEVEL_INFO, "changed name to: %s", text_layer_get_text(s_dog_name));
+
+  if(sizeof(value)/sizeof(*value) > 4) {
+    text_layer_set_font(s_dog_name, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  } else {
+    text_layer_set_font(s_dog_name, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
+  }
+}
+
+void main_window_update_gender(char* value) {
+  // 0 == boy
+  if(strncmp("BOY", value, 3) == 0 /*strcmp(value, "BOY") == 0*/) {
+    bitmap_layer_destroy(s_bitmap_layer_girl);
+    text_layer_destroy(s_dog_name);
+
+    create_boy(layer_get_bounds(window_get_root_layer(s_main_window)));
+
+    main_window_update_name(value += 4, layer_get_bounds(window_get_root_layer(s_main_window)));
+  } else {
+    // bitmap_layer_set_bitmap(s_bitmap_layer, s_bitmap_girl);
+    bitmap_layer_destroy(s_bitmap_layer_boy);
+    text_layer_destroy(s_dog_name);
+
+    create_girl(layer_get_bounds(window_get_root_layer(s_main_window)));
+
+    main_window_update_name(value += 4, layer_get_bounds(window_get_root_layer(s_main_window)));
+  }
 }

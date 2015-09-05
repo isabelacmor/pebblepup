@@ -13,6 +13,17 @@
     "dummy": 0
   },
   "resources": {
-    "media": []
+    "media": [
+      {
+        "type": "png",
+        "name": "DOG_BLUE",
+        "file": "images/dog-blue.png"
+      },
+      {
+        "type": "png",
+        "name": "DOG_PINK",
+        "file": "images/dog-pink.png"
+      }
+    ]
   }
 }

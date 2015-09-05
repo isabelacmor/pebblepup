@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="20dp" >
+
+    <EditText
+        android:id="@+id/dog_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:hint="Dog's Name"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dog_name"
+        android:id="@+id/gender_choices"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Boy"
+            android:id="@+id/radio_boy"
+            android:layout_marginRight="20dp"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Girl"
+            android:id="@+id/radio_girl"
+            android:layout_toRightOf="@id/radio_boy" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/dialogButtonOK"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/gender_choices" />
+
+</RelativeLayout>

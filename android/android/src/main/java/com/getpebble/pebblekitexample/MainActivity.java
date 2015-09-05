@@ -61,19 +61,6 @@ public class MainActivity extends Activity {
 		actionBar.setTitle("Pebble Pups");
 		actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.actionbar_orange)));
 		
-		// Add Install Button behavior
-//		Button installButton = (Button)findViewById(R.id.button_install);
-//		installButton.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				//Install
-//				Toast.makeText(getApplicationContext(), "Installing watchapp...", Toast.LENGTH_SHORT).show();
-//				sideloadInstall(getApplicationContext(), WATCHAPP_FILENAME);
-//			}
-//
-//		});
-		
 		// Add listeners to all directional buttons
 		Button moveUpButton = (Button)findViewById(R.id.button_move_up);
         Button moveDownButton = (Button)findViewById(R.id.button_move_down);

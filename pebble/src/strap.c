@@ -10,8 +10,10 @@
 #define KEY_UP_RIGHT 6
 #define KEY_DOWN_LEFT 7
 #define KEY_DOWN_RIGHT 8
+#define KEY_UPDATE_NAME 9
+#define KEY_UPDATE_GENDER 10
 
-static int s_bytes_read = 0, s_errors = 0, s_total = 0, s_notifs = 0;
+static int s_bytes_read = 0, s_errors = 0, s_notifs = 0;
 
 // Declare an attribute pointer
 SmartstrapAttribute *attribute;
@@ -29,7 +31,7 @@ static char* smartstrap_result_to_string(SmartstrapResult result) {
   }
 }
 
-void ping_arduino() {
+void ping_arduino(char* key) {
   // Declare a buffer to be used
   size_t buff_size;
   uint8_t *buffer;
@@ -38,7 +40,7 @@ void ping_arduino() {
   smartstrap_attribute_begin_write(attribute, &buffer, &buff_size);
 
   // Store the data to be written to this attribute
-  snprintf((char*)buffer, buff_size, "Hello, smartstrap!");
+  snprintf((char*)buffer, buff_size, key);
 
   // End the write request, and send the data, expecting a response
   SmartstrapResult r = smartstrap_attribute_end_write(attribute, strlen((char*)buffer), false);
@@ -58,32 +60,40 @@ void inbox_received_handler(DictionaryIterator *iterator, void *context) {
       case KEY_UP:
         // Trigger up movement
         main_window_show_message(KEY_UP);
-        ping_arduino();
+        ping_arduino("KEY_UP");
         break;
       case KEY_DOWN:
         // Trigger down movement
         main_window_show_message(KEY_DOWN);
-        ping_arduino();
+        ping_arduino("KEY_DOWN");
         break;
       case KEY_UP_LEFT:
         // Trigger up left movement
         main_window_show_message(KEY_UP_LEFT);
-        ping_arduino();
+        ping_arduino("KEY_UP_LEFT");
         break;
       case KEY_UP_RIGHT:
         // Trigger up right movement
         main_window_show_message(KEY_UP_RIGHT);
-        ping_arduino();
+        ping_arduino("KEY_UP_RIGHT");
         break;
       case KEY_DOWN_LEFT:
         // Trigger down left movement
         main_window_show_message(KEY_DOWN_LEFT);
-        ping_arduino();
+        ping_arduino("KEY_DOWN_LEFT");
         break;
       case KEY_DOWN_RIGHT:
         // Trigger down right movement
         main_window_show_message(KEY_DOWN_RIGHT);
-        ping_arduino();
+        ping_arduino("KEY_DOWN_RIGHT");
+        break;
+      // case KEY_UPDATE_NAME:
+      //   APP_LOG(APP_LOG_LEVEL_INFO, "name to: %s", t->value->cstring);
+      //   main_window_update_name(t->value->cstring);
+      //   break;
+      case KEY_UPDATE_GENDER:
+        APP_LOG(APP_LOG_LEVEL_INFO, "gender to: %s", t->value->cstring);
+        main_window_update_gender(t->value->cstring);
         break;
       default:
         APP_LOG(APP_LOG_LEVEL_INFO, "Unknown key: %d", (int)t->key);
