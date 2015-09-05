@@ -319,6 +319,12 @@ public class MainActivity extends ActionBarActivity {
                 System.out.println("moving D");
                 out.addString(KEY_DOWN, "D");
             }
+        } else if(movingLeft) {
+            System.out.println("moving L");
+            out.addString(KEY_LEFT, "L");
+        } else if(movingRight) {
+            System.out.println("moving R");
+            out.addString(KEY_RIGHT, "R");
         }
 
         PebbleKit.sendDataToPebble(context, WATCHAPP_UUID, out);
