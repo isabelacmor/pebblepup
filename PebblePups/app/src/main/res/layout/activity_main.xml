@@ -11,13 +11,14 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp">
+        android:layout_marginLeft="100dp">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/button_move_up"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_keyboard_arrow_up_white_24dp" />
+            android:src="@drawable/ic_keyboard_arrow_up_white_24dp"
+            android:layout_marginBottom="50dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/button_move_down"
@@ -26,31 +27,13 @@
             android:layout_below="@id/button_move_up"
             android:src="@drawable/ic_keyboard_arrow_down_white_24dp" />
 
-        <!--<Button-->
-            <!--android:id="@+id/button_move_up"-->
-            <!--android:layout_width="100dp"-->
-            <!--android:layout_height="100dp"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:textColor="#FFFFFF"-->
-            <!--android:text="+"-->
-            <!--android:textSize="40sp"-->
-            <!--/>-->
-
-        <!--<Button-->
-            <!--android:id="@+id/button_move_down"-->
-            <!--android:layout_width="100dp"-->
-            <!--android:layout_height="100dp"-->
-            <!--android:layout_below="@id/button_move_up"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_marginTop="20dp"-->
-            <!--android:text="DOWN"-->
-            <!--android:textColor="#FFFFFF" />-->
-
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="75dp"
+        android:layout_marginTop="50dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,31 +44,14 @@
                 android:id="@+id/button_move_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_keyboard_arrow_left_white_24dp" />
+                android:src="@drawable/ic_keyboard_arrow_left_white_24dp"
+                android:layout_marginRight="50dp" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/button_move_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_keyboard_arrow_right_white_24dp" />
-
-            <!--<Button-->
-                <!--android:id="@+id/button_move_left"-->
-                <!--android:layout_width="100dp"-->
-                <!--android:layout_height="100dp"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:text="LEFT"-->
-                <!--android:textColor="#FFFFFF" />-->
-
-            <!--<Button-->
-                <!--android:id="@+id/button_move_right"-->
-                <!--android:layout_width="100dp"-->
-                <!--android:layout_height="100dp"-->
-                <!--android:layout_below="@id/button_move_left"-->
-                <!--android:layout_centerHorizontal="true"-->
-                <!--android:layout_marginLeft="20dp"-->
-                <!--android:text="RIGHT"-->
-                <!--android:textColor="#FFFFFF" />-->
         </LinearLayout>
 
     </RelativeLayout>
