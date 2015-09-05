@@ -1,0 +1,64 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    tools:context="com.getpebble.pebblekitexample.MainActivity"
+    android:splitMotionEvents="true"
+    android:orientation="horizontal"
+    android:paddingTop="50dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp">
+
+            <Button
+                android:id="@+id/button_move_up"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:background="@color/actionbar_orange"
+                android:text="UP"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/button_move_down"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/button_move_up"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:background="@color/actionbar_orange"
+                android:text="DOWN"
+                android:textColor="#FFFFFF" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp">
+            <Button
+                android:id="@+id/button_move_left"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:background="@color/actionbar_orange"
+                android:text="LEFT"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/button_move_right"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/button_move_left"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="20dp"
+                android:background="@color/actionbar_orange"
+                android:text="RIGHT"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+</LinearLayout>
