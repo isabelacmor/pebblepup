@@ -16,7 +16,7 @@ static void timer_handler(void *context) {
 static void init() {
   strap_init();
   main_window_push();
-
+  app_comm_set_sniff_interval(SNIFF_INTERVAL_REDUCED);
   app_timer_register(1000, timer_handler, NULL);
 }
 
