@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -29,6 +30,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import com.getpebble.android.kit.PebbleKit;
@@ -38,7 +42,12 @@ import com.getpebble.android.kit.util.PebbleDictionary;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final UUID WATCHAPP_UUID = UUID.fromString("945fcb0e-31fa-4dc2-a96d-a441e6ae6cc1");
+    private SharedPreferences sharedpreferences;
+    private static final String PEBBLE_APP_UUID = "945fcb0e-31fa-4dc2-a96d-a441e6ae6cc1";
+    private static final String DEFAULT_DOG_NAME = "poop";
+    private static final int DEFAULT_DOG_GENDER = 1;
+
+    private static final UUID WATCHAPP_UUID = UUID.fromString(PEBBLE_APP_UUID);
     private static final String WATCHAPP_FILENAME = "pebble.pbw";
 
     private static final int
@@ -52,7 +61,8 @@ public class MainActivity extends ActionBarActivity {
             KEY_DOWN_LEFT = 7,
             KEY_DOWN_RIGHT = 8,
             KEY_UPDATE_NAME = 9,
-            KEY_UPDATE_GENDER = 10,
+            KEY_UPDATE_BOTH = 10,
+            KEY_SHOW_OFF = 11,
             BUTTON_UP = 0,
             BUTTON_SELECT = 1,
             BUTTON_DOWN = 2;
@@ -69,11 +79,30 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Open stored settings
+        sharedpreferences = getSharedPreferences("PebblePupPrefs", Context.MODE_PRIVATE);
+
+        // Open Pebble Companion App
+        PebbleKit.startAppOnPebble(getApplicationContext(), UUID.fromString(PEBBLE_APP_UUID));
+
+        // Update data on the Pebble App
+        String allSettings = sharedpreferences.getString("SETTINGS", ";");
+        String[] both = allSettings.split(";");
+
+        if(both.length == 0) {
+            updateSettings(DEFAULT_DOG_NAME, DEFAULT_DOG_GENDER, getApplicationContext());
+        } else if(both.length == 1) {
+            updateSettings(DEFAULT_DOG_NAME, both[0].equalsIgnoreCase("BOY") ? 0 : 1, getApplicationContext());
+        } else {
+            updateSettings(both[1], both[0].equalsIgnoreCase("BOY") ? 0 : 1, getApplicationContext());
+        }
+
         // Add listeners to all directional buttons
         FloatingActionButton moveUpButton = (FloatingActionButton)findViewById(R.id.button_move_up);
         FloatingActionButton moveDownButton = (FloatingActionButton)findViewById(R.id.button_move_down);
         FloatingActionButton moveLeftButton = (FloatingActionButton)findViewById(R.id.button_move_left);
         FloatingActionButton moveRightButton = (FloatingActionButton)findViewById(R.id.button_move_right);
+        Button showOffButton = (Button)findViewById(R.id.button_show_off);
 
         moveUpButton.setOnTouchListener(new View.OnTouchListener() {
 
@@ -136,11 +165,11 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN ) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // Pressing the button
                     movingRight = true;
                     return true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP ) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     // Releasing the button
                     movingRight = false;
                     return true;
@@ -148,6 +177,19 @@ public class MainActivity extends ActionBarActivity {
 
                 doMove(getApplicationContext());
                 return false;
+            }
+        });
+
+        showOffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Send show off command to Pebble
+                PebbleDictionary out = new PebbleDictionary();
+                out.addString(KEY_SHOW_OFF, "DO");
+                //out.addString(KEY_UPDATE_NAME, name);
+                PebbleKit.sendDataToPebble(getApplicationContext(), WATCHAPP_UUID, out);
+
             }
         });
 
@@ -174,8 +216,28 @@ public class MainActivity extends ActionBarActivity {
             dialog.setContentView(R.layout.settings);
             dialog.setTitle("Pebble Pups Settings");
 
+            // Get the current saved settings
+            String allSettings = sharedpreferences.getString("SETTINGS", ";");
+            final String[] both = allSettings.split(";");
+
+            // Set the text field based on stored value
             final EditText mEdit = (EditText) dialog.findViewById(R.id.dog_name);
+            mEdit.setText(both.length >= 2 ? both[1] : "", TextView.BufferType.EDITABLE);
+
             final RadioGroup genders = (RadioGroup) dialog.findViewById(R.id.gender_choices);
+
+            // Set the checked radio button based on stored value
+            int count = genders.getChildCount();
+            for (int i=0;i<count;i++) {
+                View o = genders.getChildAt(i);
+                if (o instanceof RadioButton) {
+                    if(i == (both[0].equalsIgnoreCase("BOY") ? 0 : 1)) {
+                        ((RadioButton) o).setChecked(true);
+                    } else {
+                        ((RadioButton) o).setChecked(false);
+                    }
+                }
+            }
 
             Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
             // if button is clicked, close the custom dialog
@@ -187,7 +249,14 @@ public class MainActivity extends ActionBarActivity {
                     View radioButton = genders.findViewById(radioButtonID);
                     int index = genders.indexOfChild(radioButton);
 
-                    updateSettings(mEdit.getText().toString(), index, MainActivity.this);
+                    if((index == 1 && both[0].equalsIgnoreCase("GIRL")) || (index == 0 && both[0].equalsIgnoreCase("BOY"))) {
+                        System.out.println("Sending only name");
+                        updateSettings(mEdit.getText().toString(), MainActivity.this);
+                    } else {
+                        System.out.println("Sending both name and gender");
+                        updateSettings(mEdit.getText().toString(), index, MainActivity.this);
+                    }
+
                     dialog.dismiss();
                 }
             });
@@ -198,14 +267,34 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void updateSettings(String name, int gender, Context context) {
+    public void updateSettings(String name, Context context) {
         // Send name to Pebble
         PebbleDictionary out = new PebbleDictionary();
-        out.addString(KEY_UPDATE_GENDER, (gender == 0 ? "BOY;"+name : "GIRL;"+name));
+        out.addString(KEY_UPDATE_NAME, name);
+        PebbleKit.sendDataToPebble(context, WATCHAPP_UUID, out);
+
+        // Save in local storage to repopulate next time
+        String allSettings = sharedpreferences.getString("SETTINGS", ";");
+        String[] both = allSettings.split(";");
+
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString("SETTINGS", both[0] + ";" + name);
+        editor.commit();
+    }
+
+    public void updateSettings(String name, int gender, Context context) {
+        System.out.println("UPDATING TO: " + (gender == 0 ? "BOY;"+name : "GIRL;"+name));
+
+        // Send name to Pebble
+        PebbleDictionary out = new PebbleDictionary();
+        out.addString(KEY_UPDATE_BOTH, (gender == 0 ? "BOY;"+name : "GIRL;"+name));
         //out.addString(KEY_UPDATE_NAME, name);
         PebbleKit.sendDataToPebble(context, WATCHAPP_UUID, out);
 
         // Save in local storage to repopulate next time
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString("SETTINGS", (gender == 0 ? "BOY" : "GIRL") + ";" + name);
+        editor.commit();
     }
 
     @Override
@@ -223,31 +312,34 @@ public class MainActivity extends ActionBarActivity {
 
                     // What message was received?
                     if(data.getInteger(KEY_BUTTON) != null) {
+
+                        // Update data on the Pebble App
+
                         // KEY_BUTTON was received, determine which button
-                        final int button = data.getInteger(KEY_BUTTON).intValue();
+//                        final int button = data.getInteger(KEY_BUTTON).intValue();
 
-                        // Update UI on correct thread
-                        handler.post(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                switch(button) {
-                                    case BUTTON_UP:
-                                        whichButtonView.setText("UP");
-                                        break;
-                                    case BUTTON_SELECT:
-                                        whichButtonView.setText("SELECT");
-                                        break;
-                                    case BUTTON_DOWN:
-                                        whichButtonView.setText("DOWN");
-                                        break;
-                                    default:
-                                        Toast.makeText(getApplicationContext(), "Unknown button: " + button, Toast.LENGTH_SHORT).show();
-                                        break;
-                                }
-                            }
-
-                        });
+//                        // Update UI on correct thread
+//                        handler.post(new Runnable() {
+//
+//                            @Override
+//                            public void run() {
+//                                switch(button) {
+//                                    case BUTTON_UP:
+//                                        whichButtonView.setText("UP");
+//                                        break;
+//                                    case BUTTON_SELECT:
+//                                        whichButtonView.setText("SELECT");
+//                                        break;
+//                                    case BUTTON_DOWN:
+//                                        whichButtonView.setText("DOWN");
+//                                        break;
+//                                    default:
+//                                        Toast.makeText(getApplicationContext(), "Unknown button: " + button, Toast.LENGTH_SHORT).show();
+//                                        break;
+//                                }
+//                            }
+//
+//                        });
                     }
                 }
             };

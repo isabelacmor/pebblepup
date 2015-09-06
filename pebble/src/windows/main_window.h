@@ -16,7 +16,7 @@ void main_window_set_notif_count(int notification_count);
 
 void main_window_show_message(int key);
 
-void main_window_update_name(char* value, GRect bounds);
+void main_window_update_name(char* value);
 
 void main_window_update_gender(char* value);
 
