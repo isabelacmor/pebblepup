@@ -88,12 +88,14 @@ public class MainActivity extends ActionBarActivity {
         // Update data on the Pebble App
         String allSettings = sharedpreferences.getString("SETTINGS", ";");
         String[] both = allSettings.split(";");
+        System.out.println(">>" + Arrays.toString(both));
 
         if(both.length == 0) {
             updateSettings(DEFAULT_DOG_NAME, DEFAULT_DOG_GENDER, getApplicationContext());
         } else if(both.length == 1) {
             updateSettings(DEFAULT_DOG_NAME, both[0].equalsIgnoreCase("BOY") ? 0 : 1, getApplicationContext());
         } else {
+            System.out.println("sending it");
             updateSettings(both[1], both[0].equalsIgnoreCase("BOY") ? 0 : 1, getApplicationContext());
         }
 

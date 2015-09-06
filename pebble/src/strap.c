@@ -109,6 +109,12 @@ void inbox_received_handler(DictionaryIterator *iterator, void *context) {
       case KEY_UPDATE_BOTH:
         APP_LOG(APP_LOG_LEVEL_INFO, "both to: %s", t->value->cstring);
         main_window_update_gender(t->value->cstring);
+
+        if(strncmp("BOY", t->value->cstring, 3) == 0) {
+          ping_arduino("KEY_BOY");
+        } else {
+          ping_arduino("KEY_GIRL");
+        }
         break;
       default:
         APP_LOG(APP_LOG_LEVEL_INFO, "Unknown key: %d", (int)t->key);
