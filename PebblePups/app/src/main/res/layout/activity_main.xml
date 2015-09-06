@@ -38,7 +38,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp">
+            android:layout_marginLeft="100dp"
+            android:id="@+id/LR" >
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/button_move_left"
@@ -53,6 +54,17 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_keyboard_arrow_right_white_24dp" />
         </LinearLayout>
+
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Show off"
+            android:id="@+id/button_show_off"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="100dp"
+            android:textColor="#ffffffff"
+            android:layout_below="@id/LR"
+            android:background="@color/accent_material_light"/>
 
     </RelativeLayout>
 

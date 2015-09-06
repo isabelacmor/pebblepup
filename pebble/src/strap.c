@@ -11,7 +11,8 @@
 #define KEY_DOWN_LEFT 7
 #define KEY_DOWN_RIGHT 8
 #define KEY_UPDATE_NAME 9
-#define KEY_UPDATE_GENDER 10
+#define KEY_UPDATE_BOTH 10
+#define KEY_SHOW_OFF 11
 
 static int s_bytes_read = 0, s_errors = 0, s_notifs = 0;
 
@@ -97,8 +98,16 @@ void inbox_received_handler(DictionaryIterator *iterator, void *context) {
         main_window_show_message(KEY_RIGHT);
         ping_arduino("KEY_RIGHT");
         break;
-      case KEY_UPDATE_GENDER:
-        APP_LOG(APP_LOG_LEVEL_INFO, "gender to: %s", t->value->cstring);
+      case KEY_SHOW_OFF:
+        APP_LOG(APP_LOG_LEVEL_INFO, "showing off");
+        ping_arduino("KEY_SHOW_OFF");
+        break;
+      case KEY_UPDATE_NAME:
+        APP_LOG(APP_LOG_LEVEL_INFO, "name to: %s", t->value->cstring);
+        main_window_update_name(t->value->cstring);
+        break;
+      case KEY_UPDATE_BOTH:
+        APP_LOG(APP_LOG_LEVEL_INFO, "both to: %s", t->value->cstring);
         main_window_update_gender(t->value->cstring);
         break;
       default:

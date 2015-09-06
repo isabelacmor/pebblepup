@@ -61,7 +61,8 @@ public class MainActivity extends ActionBarActivity {
             KEY_DOWN_LEFT = 7,
             KEY_DOWN_RIGHT = 8,
             KEY_UPDATE_NAME = 9,
-            KEY_UPDATE_GENDER = 10,
+            KEY_UPDATE_BOTH = 10,
+            KEY_SHOW_OFF = 11,
             BUTTON_UP = 0,
             BUTTON_SELECT = 1,
             BUTTON_DOWN = 2;
@@ -101,6 +102,7 @@ public class MainActivity extends ActionBarActivity {
         FloatingActionButton moveDownButton = (FloatingActionButton)findViewById(R.id.button_move_down);
         FloatingActionButton moveLeftButton = (FloatingActionButton)findViewById(R.id.button_move_left);
         FloatingActionButton moveRightButton = (FloatingActionButton)findViewById(R.id.button_move_right);
+        Button showOffButton = (Button)findViewById(R.id.button_show_off);
 
         moveUpButton.setOnTouchListener(new View.OnTouchListener() {
 
@@ -178,6 +180,19 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        showOffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Send show off command to Pebble
+                PebbleDictionary out = new PebbleDictionary();
+                out.addString(KEY_SHOW_OFF, "DO");
+                //out.addString(KEY_UPDATE_NAME, name);
+                PebbleKit.sendDataToPebble(getApplicationContext(), WATCHAPP_UUID, out);
+
+            }
+        });
+
     }
 
     @Override
@@ -203,7 +218,7 @@ public class MainActivity extends ActionBarActivity {
 
             // Get the current saved settings
             String allSettings = sharedpreferences.getString("SETTINGS", ";");
-            String[] both = allSettings.split(";");
+            final String[] both = allSettings.split(";");
 
             // Set the text field based on stored value
             final EditText mEdit = (EditText) dialog.findViewById(R.id.dog_name);
@@ -234,7 +249,14 @@ public class MainActivity extends ActionBarActivity {
                     View radioButton = genders.findViewById(radioButtonID);
                     int index = genders.indexOfChild(radioButton);
 
-                    updateSettings(mEdit.getText().toString(), index, MainActivity.this);
+                    if((index == 1 && both[0].equalsIgnoreCase("GIRL")) || (index == 0 && both[0].equalsIgnoreCase("BOY"))) {
+                        System.out.println("Sending only name");
+                        updateSettings(mEdit.getText().toString(), MainActivity.this);
+                    } else {
+                        System.out.println("Sending both name and gender");
+                        updateSettings(mEdit.getText().toString(), index, MainActivity.this);
+                    }
+
                     dialog.dismiss();
                 }
             });
@@ -245,12 +267,27 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void updateSettings(String name, Context context) {
+        // Send name to Pebble
+        PebbleDictionary out = new PebbleDictionary();
+        out.addString(KEY_UPDATE_NAME, name);
+        PebbleKit.sendDataToPebble(context, WATCHAPP_UUID, out);
+
+        // Save in local storage to repopulate next time
+        String allSettings = sharedpreferences.getString("SETTINGS", ";");
+        String[] both = allSettings.split(";");
+
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString("SETTINGS", both[0] + ";" + name);
+        editor.commit();
+    }
+
     public void updateSettings(String name, int gender, Context context) {
-        System.out.println("UPDATING TO: " + name + ";" + (gender == 0 ? "BOY;"+name : "GIRL;"+name));
+        System.out.println("UPDATING TO: " + (gender == 0 ? "BOY;"+name : "GIRL;"+name));
 
         // Send name to Pebble
         PebbleDictionary out = new PebbleDictionary();
-        out.addString(KEY_UPDATE_GENDER, (gender == 0 ? "BOY;"+name : "GIRL;"+name));
+        out.addString(KEY_UPDATE_BOTH, (gender == 0 ? "BOY;"+name : "GIRL;"+name));
         //out.addString(KEY_UPDATE_NAME, name);
         PebbleKit.sendDataToPebble(context, WATCHAPP_UUID, out);
 

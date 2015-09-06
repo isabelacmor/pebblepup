@@ -77,23 +77,17 @@ void main_window_load(Window *window) {
       GRect(3, (7 * MAIN_WINDOW_STATE_HEIGHT), bounds.size.w, 28),
       FONT_KEY_GOTHIC_18_BOLD, GTextAlignmentCenter, GColorWhite);
 
+  s_dog_name = text_layer_init(GRect(0, 20, 150, 40),
+      FONT_KEY_BITHAM_30_BLACK, GTextAlignmentCenter, GColorWhite);
+
+  text_layer_set_text(s_dog_name, "");
+
   s_bitmap_boy = gbitmap_create_with_resource(RESOURCE_ID_DOG_BLUE);
   s_bitmap_girl = gbitmap_create_with_resource(RESOURCE_ID_DOG_PINK);
-
-  s_dog_name = text_layer_init(GRect(0, 20, bounds.size.w, 40),
-      FONT_KEY_BITHAM_30_BLACK, GTextAlignmentCenter, GColorWhite);
 
   s_bitmap_layer_boy = bitmap_layer_create(GRect(0, 0, bounds.size.w, 80));
   s_bitmap_layer_girl = bitmap_layer_create(GRect(0, 0, bounds.size.w, 80));
 
-  // create_boy(layer_get_bounds(window_layer));
-  // text_layer_set_text(s_dog_name, "Max");
-
-  // Init UI
-  // main_window_set_connected_state(false);
-  // main_window_set_bytes_read(0);
-  // main_window_set_error_rate(0, 0);
-  // main_window_set_notif_count(0);
   main_window_init_moves();
 }
 
@@ -103,8 +97,8 @@ void main_window_unload(Window *window) {
   text_layer_destroy(s_error_rate_layer);
   text_layer_destroy(s_notif_count_layer);
 
-  bitmap_layer_destroy(s_bitmap_layer_boy);
-  bitmap_layer_destroy(s_bitmap_layer_girl);
+  // bitmap_layer_destroy(s_bitmap_layer_boy);
+  // bitmap_layer_destroy(s_bitmap_layer_girl);
   gbitmap_destroy(s_bitmap_boy);
   gbitmap_destroy(s_bitmap_girl);
 
@@ -255,39 +249,33 @@ void main_window_init_moves() {
   text_layer_set_text(s_move_right_layer, s_buffer4);
 }
 
-void main_window_update_name(char* value, GRect bounds) {
-  s_dog_name = text_layer_init(GRect(0, 20, bounds.size.w, 40),
+void main_window_update_name(char* value) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "UPDATINGGGGGGGG NAME: %s", value);
+
+  text_layer_destroy(s_dog_name);
+
+  s_dog_name = text_layer_init(GRect(0, 20, 150, 40),
       FONT_KEY_BITHAM_30_BLACK, GTextAlignmentCenter, GColorWhite);
 
   text_layer_set_text(s_dog_name, value);
-
-  APP_LOG(APP_LOG_LEVEL_INFO, "changed name to: %s", text_layer_get_text(s_dog_name));
-
-  if(sizeof(value)/sizeof(*value) > 4) {
-    text_layer_set_font(s_dog_name, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-  } else {
-    text_layer_set_font(s_dog_name, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
-  }
 }
 
 void main_window_update_gender(char* value) {
-  APP_LOG(APP_LOG_LEVEL_INFO, "UPDATINGGGGGGGG: %s", value);
+  APP_LOG(APP_LOG_LEVEL_INFO, "UPDATINGGGGGGGG BOTH: %s", value);
 
   // 0 == boy
   if(strncmp("BOY", value, 3) == 0 /*strcmp(value, "BOY") == 0*/) {
-    // bitmap_layer_destroy(s_bitmap_layer_girl);
-    text_layer_destroy(s_dog_name);
+    //bitmap_layer_destroy(s_bitmap_layer_girl);
 
     create_boy(layer_get_bounds(window_get_root_layer(s_main_window)));
 
-    main_window_update_name(value + 4, layer_get_bounds(window_get_root_layer(s_main_window)));
+    main_window_update_name(value + 4);
   } else {
     // bitmap_layer_set_bitmap(s_bitmap_layer, s_bitmap_girl);
-    // bitmap_layer_destroy(s_bitmap_layer_boy);
-    text_layer_destroy(s_dog_name);
+    //bitmap_layer_destroy(s_bitmap_layer_boy);
 
     create_girl(layer_get_bounds(window_get_root_layer(s_main_window)));
 
-    main_window_update_name(value + 5, layer_get_bounds(window_get_root_layer(s_main_window)));
+    main_window_update_name(value + 5);
   }
 }
