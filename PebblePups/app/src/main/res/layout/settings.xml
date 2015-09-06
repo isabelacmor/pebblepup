@@ -41,7 +41,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Save"
-        android:layout_marginTop="5dp"
-        android:layout_below="@+id/gender_choices" />
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/gender_choices"
+        android:background="@color/accent_material_light"
+        android:color="#fffff" />
 
 </RelativeLayout>

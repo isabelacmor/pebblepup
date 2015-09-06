@@ -6,14 +6,6 @@
 
 void main_window_push();
 
-void main_window_set_connected_state(bool is_connected);
-
-void main_window_set_bytes_read(int bytes);
-
-void main_window_set_error_rate(int errors, int total);
-
-void main_window_set_notif_count(int notification_count);
-
 void main_window_show_message(int key);
 
 void main_window_update_name(char* value);

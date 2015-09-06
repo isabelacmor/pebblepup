@@ -213,7 +213,7 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            // custom dialog
+            // Settings dialog
             final Dialog dialog = new Dialog(MainActivity.this);
             dialog.setContentView(R.layout.settings);
             dialog.setTitle("Pebble Pups Settings");
@@ -226,7 +226,11 @@ public class MainActivity extends ActionBarActivity {
             final EditText mEdit = (EditText) dialog.findViewById(R.id.dog_name);
             mEdit.setText(both.length >= 2 ? both[1] : "", TextView.BufferType.EDITABLE);
 
+            // Get the entire gender RadioGroup
             final RadioGroup genders = (RadioGroup) dialog.findViewById(R.id.gender_choices);
+
+            // Get the dialog's "submit" button
+            Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
 
             // Set the checked radio button based on stored value
             int count = genders.getChildCount();
@@ -241,29 +245,33 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
 
-            Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
-            // if button is clicked, close the custom dialog
+            // Handle the submit button being clicked and close the custom dialog
             dialogButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
+                    // Get the selected gender
                     int radioButtonID = genders.getCheckedRadioButtonId();
                     View radioButton = genders.findViewById(radioButtonID);
                     int index = genders.indexOfChild(radioButton);
 
+                    // Send either both settings or just the name (because of how Pebble handles its layers)
                     if((index == 1 && both[0].equalsIgnoreCase("GIRL")) || (index == 0 && both[0].equalsIgnoreCase("BOY"))) {
-                        System.out.println("Sending only name");
                         updateSettings(mEdit.getText().toString(), MainActivity.this);
                     } else {
-                        System.out.println("Sending both name and gender");
                         updateSettings(mEdit.getText().toString(), index, MainActivity.this);
                     }
 
+                    // Close the dialog
                     dialog.dismiss();
                 }
             });
 
+            // Show the dialog
             dialog.show();
+        } else if (id == R.id.action_install_pbw) {
+            Toast.makeText(getApplicationContext(), "Installing pebble app", Toast.LENGTH_SHORT).show();
+            sideloadInstall(getApplicationContext(), WATCHAPP_FILENAME);
         }
 
         return super.onOptionsItemSelected(item);
@@ -285,12 +293,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void updateSettings(String name, int gender, Context context) {
-        System.out.println("UPDATING TO: " + (gender == 0 ? "BOY;"+name : "GIRL;"+name));
-
         // Send name to Pebble
         PebbleDictionary out = new PebbleDictionary();
         out.addString(KEY_UPDATE_BOTH, (gender == 0 ? "BOY;"+name : "GIRL;"+name));
-        //out.addString(KEY_UPDATE_NAME, name);
         PebbleKit.sendDataToPebble(context, WATCHAPP_UUID, out);
 
         // Save in local storage to repopulate next time
@@ -311,38 +316,6 @@ public class MainActivity extends ActionBarActivity {
                 public void receiveData(Context context, int transactionId, PebbleDictionary data) {
                     // Always ACK
                     PebbleKit.sendAckToPebble(context, transactionId);
-
-                    // What message was received?
-                    if(data.getInteger(KEY_BUTTON) != null) {
-
-                        // Update data on the Pebble App
-
-                        // KEY_BUTTON was received, determine which button
-//                        final int button = data.getInteger(KEY_BUTTON).intValue();
-
-//                        // Update UI on correct thread
-//                        handler.post(new Runnable() {
-//
-//                            @Override
-//                            public void run() {
-//                                switch(button) {
-//                                    case BUTTON_UP:
-//                                        whichButtonView.setText("UP");
-//                                        break;
-//                                    case BUTTON_SELECT:
-//                                        whichButtonView.setText("SELECT");
-//                                        break;
-//                                    case BUTTON_DOWN:
-//                                        whichButtonView.setText("DOWN");
-//                                        break;
-//                                    default:
-//                                        Toast.makeText(getApplicationContext(), "Unknown button: " + button, Toast.LENGTH_SHORT).show();
-//                                        break;
-//                                }
-//                            }
-//
-//                        });
-                    }
                 }
             };
 
@@ -393,31 +366,23 @@ public class MainActivity extends ActionBarActivity {
 
         if(movingUp) {
             if(movingLeft) {
-                System.out.println("moving U + L");
                 out.addString(KEY_UP_LEFT, "U+L");
             } else if(movingRight) {
-                System.out.println("moving U + R");
                 out.addString(KEY_UP_RIGHT, "U+R");
             } else {
-                System.out.println("moving U");
                 out.addString(KEY_UP, "U");
             }
         } else if(movingDown) {
             if(movingLeft) {
-                System.out.println("moving D + L");
                 out.addString(KEY_DOWN_LEFT, "D+L");
             } else if(movingRight) {
-                System.out.println("moving D + R");
                 out.addString(KEY_DOWN_RIGHT, "D+R");
             } else {
-                System.out.println("moving D");
                 out.addString(KEY_DOWN, "D");
             }
         } else if(movingLeft) {
-            System.out.println("moving L");
             out.addString(KEY_LEFT, "L");
         } else if(movingRight) {
-            System.out.println("moving R");
             out.addString(KEY_RIGHT, "R");
         }
 
